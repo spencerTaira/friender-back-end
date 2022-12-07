@@ -47,12 +47,12 @@ class ForbiddenError extends ExpressError {
   }
 }
 
-// module.exports = {
-//   ExpressError,
-//   NotFoundError,
-//   UnauthorizedError,
-//   BadRequestError,
-//   ForbiddenError,
-// };
+module.exports = {
+  ExpressError,
+  NotFoundError,
+  UnauthorizedError,
+  BadRequestError,
+  ForbiddenError,
+};
 
-export {};
+// export {};

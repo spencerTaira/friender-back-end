@@ -1,10 +1,8 @@
-"use strict";
 /** ExpressError extends normal JS error so we can
  *  add a status when we make an instance of it.
  *
  *  The error-handling middleware will return this.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
 class ExpressError extends Error {
     constructor(message, status) {
         super();
@@ -36,3 +34,11 @@ class ForbiddenError extends ExpressError {
         super(message, 403);
     }
 }
+module.exports = {
+    ExpressError,
+    NotFoundError,
+    UnauthorizedError,
+    BadRequestError,
+    ForbiddenError,
+};
+// export {};

@@ -1,6 +1,4 @@
-"use strict";
 /** Shared config for application; can be required many places. */
-Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv").config();
 const SECRET_KEY = process.env.SECRET_KEY || "secret-dev";
 const PORT = +process.env.PORT || 3001;
@@ -20,3 +18,10 @@ console.log("PORT:", PORT.toString());
 console.log("BCRYPT_WORK_FACTOR", BCRYPT_WORK_FACTOR);
 console.log("Database:", getDatabaseUri());
 console.log("---");
+module.exports = {
+    SECRET_KEY,
+    PORT,
+    BCRYPT_WORK_FACTOR,
+    getDatabaseUri,
+};
+// export {};
