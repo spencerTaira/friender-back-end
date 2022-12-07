@@ -11,6 +11,8 @@ const AmazonAPI = require("./s3AmazonAPI");
 // useful error class to throw
 const { NotFoundError, BadRequestError } = require("./expressError");
 
+const { parseBody } = require("./middleware");
+
 // process JSON body => req.body
 app.use(express.json());
 
@@ -18,7 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 
-app.post("/images", function(req, res) {
+app.post("/images", parseBody, function(req, res) {
+  console.log(req.body);
   const image = AmazonAPI.upload(req.body);
   return res.status(201).json({ image });
 });
