@@ -2,7 +2,7 @@
 /** Simple demo Express app. */
 
 const express = require("express");
-// const cors = require("cors");
+const cors = require("cors");
 
 const app = express();
 
@@ -11,15 +11,22 @@ const AmazonAPI = require("./s3AmazonAPI");
 // useful error class to throw
 const { NotFoundError, BadRequestError } = require("./expressError");
 
+app.use(cors());
 // process JSON body => req.body
 app.use(express.json());
 
 // process traditional form data => req.body
 app.use(express.urlencoded());
 
+app.get("/", function(req,res) {
+  return res.json('hello')
+})
 
-app.post("/images", function(req, res) {
-  const image = AmazonAPI.upload(req.body);
+app.post("/images", async function(req, res) {
+  console.log('POST IMAGES');
+  console.log(req.body);
+  const image = await AmazonAPI.upload(req.body.image);
+  console.log('REQ.BODY', req.body);
   return res.status(201).json({ image });
 });
 
@@ -42,6 +49,6 @@ app.use(function (err, req, res, next) {
 // end
 
 
-// module.exports = app;
+module.exports = app;
 
-export {};
+// export {};

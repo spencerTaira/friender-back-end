@@ -24,11 +24,11 @@ console.log("BCRYPT_WORK_FACTOR", BCRYPT_WORK_FACTOR);
 console.log("Database:", getDatabaseUri());
 console.log("---");
 
-// module.exports = {
-//   SECRET_KEY,
-//   PORT,
-//   BCRYPT_WORK_FACTOR,
-//   getDatabaseUri,
-// };
+module.exports = {
+  SECRET_KEY,
+  PORT,
+  BCRYPT_WORK_FACTOR,
+  getDatabaseUri,
+};
 
-export {};
+// export {};
