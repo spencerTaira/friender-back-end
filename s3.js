@@ -1,6 +1,9 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+
+import aws from 'aws-sdk';
+
 require("dotenv").config();
+
 const region = "us-west-1";
 const bucket = process.env.BUCKET_NAME;
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;

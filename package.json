@@ -18,18 +18,18 @@
   },
   "homepage": "https://github.com/spencerTaira/friender-back-end#readme",
   "dependencies": {
-    "aws-sdk": "^2.1269.0",
+    "@aws-sdk/client-s3": "^3.226.0",
     "bcrypt": "^5.1.0",
-<<<<<<< HEAD
     "body-parser": "^2.0.0-beta.1",
-=======
     "cors": "^2.8.5",
->>>>>>> c6a6eb0af07cb8d67aa1c15a0d3080adfdc350f9
     "dotenv": "^16.0.3",
     "express": "^5.0.0-beta.1",
     "jsonschema": "^1.4.1",
     "jsonwebtoken": "^8.5.1",
-    "pg": "^8.8.0"
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.8.0",
+    "stream-buffers": "^3.0.2",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.14",
