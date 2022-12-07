@@ -1,5 +1,5 @@
 
-/** Database setup for jobly. */
+/** Database setup for friender. */
 
 const { Client } = require("pg");
 const { getDatabaseUri } = require("./config");
