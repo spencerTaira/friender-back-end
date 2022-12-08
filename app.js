@@ -27,20 +27,35 @@ app.get("/", function(req,res) {
   return res.json('hello')
 })
 
-app.post("/images", upload.single("image"), async function(req, res) {
+app.post("/images", upload.array("images[]"), async function(req, res) {
   console.log('POST IMAGES');
-  console.log(req.file, "THIS IS THE REQ FILE");
-  console.log(req.file.buffer, "THIS IS THE REQ FILE BUFFER")
+  console.log(req.files, "THIS IS THE REQ FILE");
+//   console.log(req.file.buffer, "THIS IS THE REQ FILE BUFFER")
 //   console.log(req.files[0].path, "THIS IS THE REQ FILE PATH");
 
   let image;
+  const responsesP = [];
   try {
-    image = await AmazonAPI.upload(req.file);
+    for (const file of req.files) {
+        responsesP.push(AmazonAPI.upload(file));
+    }
+    const responses = await Promise.allSettled(responsesP);
+    console.log('RESPONSES', responses);
+    for (const response of responses) {
+        if (response.status !== 'fulfilled') {
+            throw new Error('IMAGE UPLOAD FAILED');
+        }
+    }
+    //TODO: input files into our database (we can use .join(', ') to store and .split to retrieve)
+    const imageURLs = responses.map(r => r.value);
+    console.log('IMAGE URLS', imageURLs);
+    return res.json({ imageURLs })
+
   } catch(err) {
     console.log(err, "THIS IS THE ERROR!!!!");
   }
-  console.log('REQ.BODY', req.body);
-  return res.status(201).json("Saved image successfully");
+//   console.log('REQ.BODY', req.body);
+//   return res.status(201).json("Saved image successfully");
 });
 
 // app.post("/images",

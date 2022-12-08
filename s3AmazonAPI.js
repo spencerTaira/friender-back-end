@@ -19,9 +19,11 @@ class AmazonAPI {
   static async upload(file) {
     // call S3 to retrieve upload file to specified bucket
     // const uploadParams = {Bucket: process.argv[2], Key: '', Body: ''};
+    const keyName = v4();
+
     const uploadParams = new PutObjectCommand({
       Bucket: process.env.BUCKET_NAME,
-      Key: v4(),
+      Key: keyName,
       Body: file.buffer,
       ContentType: 'image/jpeg',
     });
@@ -55,6 +57,7 @@ class AmazonAPI {
     // });
     try {
         let data = await s3.send(uploadParams);
+        return `https://${process.env.BUCKET_NAME}.s3.us-west-1.amazonaws.com/${keyName}`;
         console.log("THIS IS THE DATA!!!!!!!!", data);
     }
     catch(err) {
