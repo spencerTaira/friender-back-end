@@ -212,6 +212,161 @@ class User {
 
     return user;
   }
+
+  /** Update user data with `data`.
+   *
+   * This is a "partial update" --- it's fine if data doesn't contain
+   * all the fields; this only changes provided ones.
+   *
+   * Data can include:
+   *   { firstName, lastName, password, hobbies, interests, zip, isAdmin }
+   *
+   * Returns { id, email, firstName, lastName, zip, hobbies, interests, isAdmin }
+   *    where hobbies is like: ["hobby1", "hobby2", "hobby3", ...]
+ *      where interests is like: ["interests1", "interests2", "interests3", ...]
+   *
+   * Throws NotFoundError if not found.
+   *
+   * WARNING: this function can set a new password or make a user an admin.
+   * Callers of this function must be certain they have validated inputs to this
+   * or a serious security risks are opened.
+   */
+
+   static async update(id, data) {
+    // if (data.password) {
+    //   data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
+    // }
+
+    console.log('Update Data', data);
+    const {hobbies, interests} = data;
+    delete data.hobbies;
+    delete data.interests;
+    console.log('AFTER DELETE', data);
+
+    const { setCols, values } = sqlForPartialUpdate(
+        data,
+        {
+          firstName: "first_name",
+          lastName: "last_name",
+          isAdmin: "is_admin",
+        });
+    const userVarIdx = "$" + (values.length + 1);
+
+    const querySql = `UPDATE users
+                      SET ${setCols}
+                      WHERE id = ${userVarIdx}
+                      RETURNING id,
+                                email,
+                                first_name AS "firstName",
+                                last_name AS "lastName",
+                                zip,
+                                is_admin AS "isAdmin"`;
+    const result = await db.query(querySql, [...values, id]);
+    const user = result.rows[0];
+
+    if (!user) throw new NotFoundError(`No user: ${username}`);
+
+    /*
+    initial state:
+    User exists
+        User has hobbies ['smash', 'chess']
+
+    update state:
+    Update user data
+        User has hobbies ['smash', 'checkers']
+
+    check if hobby exists in hobbies table
+        if so, we need to check if users_hobbies exists
+    */
+
+    const userHobbies = [];
+    const userInterests = [];
+
+    if(hobbies.length > 0) {
+      for(const hobby of hobbies) {
+        const hobbyDupeCheck = await db.query(
+          `SELECT hobby
+              FROM hobbies
+              WHERE hobby = $1`,
+          [hobby]
+        );
+
+        if(!hobbyDupeCheck.rows[0]) {
+          await db.query(
+            `INSERT INTO hobbies
+            (hobby)
+            VALUES ($1)`,
+            [hobby]
+          );
+        }
+        try {
+          const hobbyResult = await db.query(
+            `INSERT INTO users_hobbies
+            (user_id, hobby)
+            VALUES ($1, $2)
+                RETURNING hobby`,
+                [id, hobby]
+          );
+          userHobbies.push(hobbyResult.rows[0].hobby);
+        } catch (err) {
+          userHobbies.push(hobby);
+        }
+      }
+    } else {
+      await db.query(
+        `DELETE FROM users_hobbies
+          WHERE user_id = $1
+          RETURNING user_id`,
+        [id]
+      );
+    }
+
+    if(interests.length > 0) {
+      for(const interest of interests) {
+        const interestDupeCheck = await db.query(
+          `SELECT interest
+              FROM interests
+              WHERE interest = $1`,
+          [interest]
+        );
+
+        if(!interestDupeCheck.rows[0]) {
+          await db.query(
+            `INSERT INTO interests
+            (interest)
+            VALUES ($1)`,
+            [interest]
+          );
+        }
+
+        try {
+          const interestResult = await db.query(
+            `INSERT INTO users_interests
+             (user_id, interest)
+             VALUES ($1, $2)
+             RETURNING interest`,
+             [id, interest]
+          );
+          userInterests.push(interestResult.rows[0].interest);
+        } catch (err) {
+          userInterests.push(interest);
+        }
+      }
+    } else {
+      await db.query(
+        `DELETE FROM users_interests
+          WHERE user_id = $1
+          RETURNING user_id`,
+        [id]
+      );
+    }
+
+    user["hobbies"] = userHobbies;
+    user["interests"] = userInterests;
+
+    delete user.password;
+    return user;
+  }
 }
 
 module.exports = User;
