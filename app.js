@@ -7,25 +7,27 @@ const cors = require("cors");
 const multer = require("multer");
 const upload = multer();
 
-const app = express();
-
 const AmazonAPI = require("./s3AmazonAPI");
 
 // useful error class to throw
-const { NotFoundError, BadRequestError } = require("./expressError");
+const { NotFoundError } = require("./expressError");
 
-const { parseBody } = require("./middleware");
+const { authenticateJWT } = require("./middleware/auth");
+const usersRoutes = require("./routes/users");
+const messagesRoutes = require("./routes/messages");
+
+const app = express();
 
 app.use(cors());
-// process JSON body => req.body
 app.use(express.json());
+app.use(authenticateJWT);
 
-// process traditional form data => req.body
-app.use(express.urlencoded());
+app.use("/users", usersRoutes);
+app.use("/messages", messagesRoutes);
 
-app.get("/", function(req,res) {
-  return res.json('hello')
-})
+/****************************************************************************
+ ***************** ROUTES ***************************************************
+ ****************************************************************************/
 
 app.post("/images", upload.array("images[]"), async function(req, res) {
   console.log('POST IMAGES');
@@ -58,24 +60,6 @@ app.post("/images", upload.array("images[]"), async function(req, res) {
 //   console.log('REQ.BODY', req.body);
 //   return res.status(201).json("Saved image successfully");
 });
-
-// app.post("/images",
-//     bodyParser.raw({type: ["image/jpeg", "image/png"], limit: "5mb"}),
-//     (req, res) => {
-//         try {
-//             console.log(req.body);
-//             fs.writeFile("image.jpeg", req.body, (error) => {
-//                 if (error) {
-//                     throw error;
-//                 }
-//             });
-//         res.sendStatus(200);
-//     } catch (error) {
-//         res.sendStatus(500);
-//         }
-// });
-
-
 
 /** 404 handler: matches unmatched routes. */
 app.use(function (req, res) {
