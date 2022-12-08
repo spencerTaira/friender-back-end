@@ -39,12 +39,12 @@ VALUES ('Long walks on the beach'),
 ('Short walks on the beach');
 
 
-INSERT INTO users_hobbies ("user_id", hobby_id)
-VALUES (1, 1), (2, 2), (3, 3), (3, 4);
+INSERT INTO users_hobbies ("user_id", hobby)
+VALUES (1, 'Basketball'), (2, 'Chess'), (3, 'Programming'), (3, 'Smash Bros.');
 
 
-INSERT INTO users_interests ("user_id", interest_id)
-VALUES (1, 1), (2, 2), (3, 3);
+INSERT INTO users_interests ("user_id", interest)
+VALUES (1, 'Long walks on the beach'), (2, 'Medium walks on the beach'), (3, 'Short walks on the beach');
 
 
 INSERT INTO messages (msg, user_sender, user_receiver)

@@ -31,7 +31,7 @@ CREATE TABLE users_hobbies (
     REFERENCES users on DELETE CASCADE,
   hobby TEXT NOT NULL
     REFERENCES hobbies on DELETE CASCADE,
-  PRIMARY KEY ("user_id", hobby_id)
+  PRIMARY KEY ("user_id", hobby)
 );
 
 CREATE TABLE users_interests (
@@ -39,7 +39,7 @@ CREATE TABLE users_interests (
     REFERENCES users on DELETE CASCADE,
   interest TEXT NOT NULL
     REFERENCES interests on DELETE CASCADE,
-  PRIMARY KEY ("user_id", interest_id)
+  PRIMARY KEY ("user_id", interest)
 );
 
 CREATE TABLE messages (
