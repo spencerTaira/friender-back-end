@@ -42,6 +42,8 @@
     "password",
     "firstName",
     "lastName",
-    "zip"
+    "zip",
+    "hobbies",
+    "interests"
   ]
 }

@@ -13,6 +13,7 @@ const AmazonAPI = require("./s3AmazonAPI");
 const { NotFoundError } = require("./expressError");
 
 const { authenticateJWT } = require("./middleware/auth");
+const authRoutes = require("./routes/auth");
 const usersRoutes = require("./routes/users");
 const messagesRoutes = require("./routes/messages");
 
@@ -22,6 +23,7 @@ app.use(cors());
 app.use(express.json());
 app.use(authenticateJWT);
 
+app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
 app.use("/messages", messagesRoutes);
 
@@ -77,3 +79,11 @@ app.use(function (err, req, res, next) {
 
 
 module.exports = app;
+
+
+
+// AUTH TOKEN for test user
+
+// {
+// 	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNjcwNTMyMDQ0fQ.EXH-vEf5g3-mmNC7o4X-AZ9oOXLPLJmWeF7JX3quVS0"
+// }

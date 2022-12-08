@@ -74,11 +74,11 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  **/
 
  router.get(
-  "/:username",
+  "/:id",
   ensureLoggedIn,
   async function (req, res, next) {
     try {
-      const user = await User.get(req.params.username);
+      const user = await User.get(req.params.id);
       return res.json({ user });
     } catch (err) {
       return next(err);

@@ -25,7 +25,7 @@ class User {
     // try to find the user first
     const result = await db.query(
       `SELECT email,
-                  password,
+                  password_hash AS "passwordHash",
                   first_name AS "firstName",
                   last_name AS "lastName",
                   zip,
@@ -39,9 +39,9 @@ class User {
 
     if (user) {
       // compare hashed password to a new hash from password
-      const isValid = await bcrypt.compare(password, user.password);
+      const isValid = await bcrypt.compare(password, user.passwordHash);
       if (isValid === true) {
-        delete user.password;
+        delete user.passwordHash;
         return user;
       }
     }
@@ -83,13 +83,13 @@ class User {
     const userResult = await db.query(
       `INSERT INTO users
       (email,
-        password,
+        password_hash,
         first_name,
         last_name,
         zip,
         is_admin)
         VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id, email, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin"`,
+        RETURNING id, email, first_name AS "firstName", last_name AS "lastName", zip, is_admin AS "isAdmin"`,
         [email, hashedPassword, firstName, lastName, zip, isAdmin]
         );
 
