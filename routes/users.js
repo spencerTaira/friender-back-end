@@ -78,7 +78,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
   ensureLoggedIn,
   async function (req, res, next) {
     try {
-      const user = await User.get(req.params.id);
+      const user = await User.get(Number(req.params.id));
       return res.json({ user });
     } catch (err) {
       return next(err);
@@ -99,7 +99,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  **/
 
  router.patch(
-  "/:username",
+  "/:id",
   ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {

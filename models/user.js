@@ -161,14 +161,65 @@ class User {
 
     return user;
   }
+
+  /** Gets user with data.
+   *
+   *  Input: id - number
+   *  Returns { id, email, firstName, lastName, zip, hobbies, interests, isAdmin }
+   *    where hobbies is like: ["hobby1", "hobby2", "hobby3", ...]
+ *      where interests is like: ["interests1", "interests2", "interests3", ...]
+   *
+   *  Throws NotFoundError if no user exists
+   **/
+  static async get(id) {
+    const userRes = await db.query(
+      `SELECT
+          id,
+          email,
+          first_name AS "firstName",
+          last_name AS "lastName",
+          zip,
+          is_admin AS "isAdmin"
+        FROM users
+        WHERE id = $1`,
+      [id]
+    );
+
+    const user = userRes.rows[0];
+
+    if (!user) throw new NotFoundError(`No user: ${id}`);
+
+    const userHobbiesRes = await db.query(
+      `SELECT
+          hobby
+        FROM users_hobbies
+        WHERE user_id = $1`,
+      [id]
+    );
+
+    console.log('USER HOBBIES RES', userHobbiesRes);
+    user.hobbies = userHobbiesRes.rows.map(h => h.hobby);
+
+    const userInterestsRes = await db.query(
+      `SELECT
+          interest
+        FROM users_interests
+        WHERE user_id = $1`,
+      [id]
+    );
+
+    user.interests = userInterestsRes.rows.map(i => i.interest);
+
+    return user;
+  }
 }
 
 module.exports = User;
 
 // METHODS
 
-  // AUTHENTICATE
-  // REGISTER
+  // AUTHENTICATE - Done
+  // REGISTER - Done
   // GET SPECIFIC USER
   // GET FRIENDS
   // GET NON-VIEWED USERS
