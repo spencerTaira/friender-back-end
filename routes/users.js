@@ -111,7 +111,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
         throw new BadRequestError(errs);
       }
 
-      const user = await User.update(req.params.username, req.body);
+      const user = await User.update(Number(req.params.id), req.body);
       return res.json({ user });
     } catch (err) {
       return next(err);
