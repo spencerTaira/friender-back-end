@@ -8,7 +8,6 @@ CREATE TABLE users (
   hobbies TEXT NOT NULL,
   interests TEXT NOT NULL,
   zip TEXT NOT NULL,
-  photo TEXT NOT NULL,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -29,4 +28,10 @@ CREATE TABLE messages (
     REFERENCES users ON DELETE CASCADE,
   user_receiver INTEGER
     REFERENCES users ON DELETE CASCADE
+);
+
+CREATE TABLE images (
+  image_url TEXT PRIMARY KEY,
+  userID INTEGER
+    REFERENCES users on DELETE CASCADE
 );

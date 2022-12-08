@@ -33,7 +33,6 @@ app.post("/images", upload.array("images[]"), async function(req, res) {
 //   console.log(req.file.buffer, "THIS IS THE REQ FILE BUFFER")
 //   console.log(req.files[0].path, "THIS IS THE REQ FILE PATH");
 
-  let image;
   const responsesP = [];
   try {
     for (const file of req.files) {
@@ -46,8 +45,10 @@ app.post("/images", upload.array("images[]"), async function(req, res) {
             throw new Error('IMAGE UPLOAD FAILED');
         }
     }
-    //TODO: input files into our database (we can use .join(', ') to store and .split to retrieve)
+
     const imageURLs = responses.map(r => r.value);
+
+    console.log('URLS STRING', urlsString);
     console.log('IMAGE URLS', imageURLs);
     return res.json({ imageURLs })
 

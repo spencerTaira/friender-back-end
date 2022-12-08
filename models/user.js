@@ -1,0 +1,12 @@
+"use strict";
+
+// METHODS
+
+  // AUTHENTICATE
+  // REGISTER
+  // GET SPECIFIC USER
+  // GET FRIENDS
+  // GET NON-VIEWED USERS
+  // LIKE/DISLIKE
+  // UPDATE
+  // DELETE
