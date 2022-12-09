@@ -79,7 +79,13 @@ VALUES (
 
 -- Finding users who haven't seen eachother yet
 
--- SELECT u.id FROM users_viewing_relationship as ur
---   JOIN users as u
---     ON ur.user_viewee != u.id
--- WHERE ur.user_viewer = 3 AND u.id != 3;
+-- SELECT u.id
+--   FROM users AS u
+--   WHERE u.id != ALL(
+--     SELECT uvr.user_viewee
+--     FROM users_viewing_relationship AS uvr
+--     WHERE uvr.user_viewer = 1
+--   ) AND u.id != 1;
+
+-- [1, 2, 3].some(num => num != 3) => true
+-- [1, 2, 3].every(num => num != 3) => false

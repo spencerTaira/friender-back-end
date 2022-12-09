@@ -367,6 +367,63 @@ class User {
     delete user.password;
     return user;
   }
+
+  /** Delete given user from database; returns undefined */
+
+  static async remove(id) {
+    const result = await db.query(
+      `DELETE
+        FROM users
+        WHERE id = $1
+        RETURNING id`,
+      [id]
+    );
+    const user = result.rows[0];
+
+    if(!user) throw new NotFoundError(`No user: ${id}`);
+  }
+
+  /** Gets all of user's friends */
+
+  static async getFriends(id) {
+    const results = await db.query(
+      `SELECT u1.user_viewee
+         FROM users_viewing_relationship AS u1
+           JOIN users_viewing_relationship AS u2
+             ON u1.user_viewee = u2.user_viewer AND u1.user_viewer = u2.user_viewee
+         WHERE u1.user_viewer = $1 AND u1.is_liked = true AND u2.is_liked = true;`,
+         [id]
+    );
+    const friendsP = results.rows.map(async f => await this.get(f.user_viewee));
+    console.log("THIS IS FRIENDS PROMISE!!!", friendsP);
+
+    const friends = (await Promise.allSettled(friendsP)).map(f => f.value);
+    console.log("THIS IS FRIENDS ARRAY!!!", friends);
+
+    return friends;
+  }
+
+  /** Get non-viewed users */
+
+  static async getStrangers(id) {
+    const results = await db.query(
+      `SELECT u.id
+         FROM users AS u
+         WHERE u.id != ALL(
+           SELECT uvr.user_viewee
+           FROM users_viewing_relationship AS uvr
+           WHERE uvr.user_viewer = $1
+         ) AND u.id != $1;`,
+       [id]
+    );
+    const strangersP = results.rows.map(async s => await this.get(s.id));
+    console.log("THIS IS STRANGERS PROMISE!!!", strangersP);
+
+    const strangers = (await Promise.allSettled(strangersP)).map(s => s.value);
+    console.log("THIS IS STRANGERS ARRAY!!!", strangers);
+
+    return strangers;
+  }
 }
 
 module.exports = User;
@@ -375,9 +432,9 @@ module.exports = User;
 
   // AUTHENTICATE - Done
   // REGISTER - Done
-  // GET SPECIFIC USER
-  // GET FRIENDS
+  // GET SPECIFIC USER - Done
+  // GET FRIENDS - Done
   // GET NON-VIEWED USERS
   // LIKE/DISLIKE
-  // UPDATE
-  // DELETE
+  // UPDATE - Done
+  // DELETE - Done

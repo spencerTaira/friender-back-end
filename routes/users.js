@@ -73,7 +73,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  * Authorization required: logged-in
  **/
 
- router.get(
+router.get(
   "/:id",
   ensureLoggedIn,
   async function (req, res, next) {
@@ -98,7 +98,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  * Authorization required: admin or same-user-as-:username
  **/
 
- router.patch(
+router.patch(
   "/:id",
   // ensureCorrectUserOrAdmin,
   async function (req, res, next) {
@@ -119,18 +119,44 @@ router.get("/", ensureAdmin, async function (req, res, next) {
   }
 );
 
-/** DELETE /[username]  =>  { deleted: username }
+/** DELETE /[id]  =>  { deleted: id }
  *
- * Authorization required: admin or same-user-as-:username
+ * Authorization required: admin or same-user-as-:id
  **/
 
- router.delete(
-  "/:username",
-  ensureCorrectUserOrAdmin,
+router.delete(
+  "/:id",
+  // ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {
-      await User.remove(req.params.username);
-      return res.json({ deleted: req.params.username });
+      await User.remove(Number(req.params.id));
+      return res.json({ deleted: req.params.id });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+router.get(
+  "/:id/friends",
+  // ensureCorrectUserOrAdmin,
+  async function (req, res, next) {
+    try {
+      const friends = await User.getFriends(Number(req.params.id));
+      return res.json({ friends });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+router.get(
+  "/:id/strangers",
+  // ensureCorrectUserOrAdmin,
+  async function (req, res, next) {
+    try {
+      const strangers = await User.getStrangers(Number(req.params.id));
+      return res.json({ strangers });
     } catch (err) {
       return next(err);
     }
