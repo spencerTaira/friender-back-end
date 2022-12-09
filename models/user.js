@@ -424,6 +424,32 @@ class User {
 
     return strangers;
   }
+
+  /**
+   * Create relationship between two users in users_viewing_relationship
+   */
+  static async chooseFriend(userId, strangerId, isLiked) {
+    try {
+      const result = await db.query(
+        `INSERT INTO users_viewing_relationship
+         (user_viewer, user_viewee, is_liked)
+         VALUES ($1, $2, $3)
+         RETURNING
+          user_viewer AS "userViewer",
+          user_viewee AS "userViewee",
+          is_liked AS "isLiked"`,
+         [userId, strangerId, isLiked]
+      );
+
+      return result.rows[0];
+
+    } catch (err) {
+      throw new BadRequestError(
+        `${userId} has already chosen ${strangerId} as friend or foe`
+      );
+    }
+
+  }
 }
 
 module.exports = User;
@@ -434,7 +460,7 @@ module.exports = User;
   // REGISTER - Done
   // GET SPECIFIC USER - Done
   // GET FRIENDS - Done
-  // GET NON-VIEWED USERS
+  // GET NON-VIEWED USERS - Done
   // LIKE/DISLIKE
   // UPDATE - Done
   // DELETE - Done

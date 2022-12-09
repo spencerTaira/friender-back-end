@@ -163,4 +163,21 @@ router.get(
   }
 );
 
+router.post(
+  "/choose",
+  // ensureCorrectUserOrAdmin,
+  async function (req, res, next) {
+    try {
+      const relationship = await User.chooseFriend(
+                                  req.body.id1,
+                                  req.body.id2,
+                                  req.body.isLiked
+                            );
+      return res.json({ relationship });
+    } catch (err) {
+      return next(err);
+    }
+  }
+)
+
 module.exports = router;
