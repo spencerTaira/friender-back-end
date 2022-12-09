@@ -448,7 +448,31 @@ class User {
         `${userId} has already chosen ${strangerId} as friend or foe`
       );
     }
+  }
 
+  /** Insert images with link to user into the database */
+  static async insertImages(id, urls) {
+    const imageUrls = [];
+
+    if (urls.length > 0) {
+      for (const url of urls) {
+        try {
+          const result = await db.query(
+            `INSERT INTO images
+            (image_url, user_id)
+            VALUES ($1, $2)
+            RETURNING
+              image_url`,
+            [url, id]
+          );
+          imageUrls.push(result.rows[0].image_url);
+        } catch (err) {
+          imageUrls.push(url);
+        }
+      }
+    }
+
+    return imageUrls;
   }
 }
 

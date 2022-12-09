@@ -16,6 +16,7 @@ const { authenticateJWT } = require("./middleware/auth");
 const authRoutes = require("./routes/auth");
 const usersRoutes = require("./routes/users");
 const messagesRoutes = require("./routes/messages");
+const User = require("./models/user");
 
 const app = express();
 
@@ -50,9 +51,11 @@ app.post("/images", upload.array("images[]"), async function(req, res) {
         }
     }
 
-    const imageURLs = responses.map(r => r.value);
+    const urls = responses.map(r => r.value);
+    const imageURLs = await User.insertImages(res.locals.user.id, urls);
+    console.log('IMAGE URLS', imageURLs);
 
-    console.log('URLS STRING', urlsString);
+    // console.log('URLS STRING', urlsString);
     console.log('IMAGE URLS', imageURLs);
     return res.json({ imageURLs })
 

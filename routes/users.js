@@ -180,4 +180,17 @@ router.post(
   }
 )
 
+// router.post(
+//   "/images",
+//   // ensureCorrectUserOrAdmin,
+//   async function (req, res, next) {
+//     try {
+//       const imageURLs = await User.insertImages(req.body.id, req.body.imageURLs)
+//       return res.json({ imageURLs });
+//     } catch (err) {
+//       return next(err);
+//     }
+//   }
+// )
+
 module.exports = router;
