@@ -176,10 +176,6 @@ class User {
     // }
 
     console.log('Update Data', data);
-    const {hobbies, interests} = data;
-    delete data.hobbies;
-    delete data.interests;
-    console.log('AFTER DELETE', data);
 
     const { setCols, values } = sqlForPartialUpdate(
         data,
@@ -217,90 +213,90 @@ class User {
         if so, we need to check if users_hobbies exists
     */
 
-    const userHobbies = [];
-    const userInterests = [];
+    // const userHobbies = [];
+    // const userInterests = [];
 
-    if(hobbies.length > 0) {
-      for(const hobby of hobbies) {
-        const hobbyDupeCheck = await db.query(
-          `SELECT hobby
-              FROM hobbies
-              WHERE hobby = $1`,
-          [hobby]
-        );
+    // if(hobbies.length > 0) {
+    //   for(const hobby of hobbies) {
+    //     const hobbyDupeCheck = await db.query(
+    //       `SELECT hobby
+    //           FROM hobbies
+    //           WHERE hobby = $1`,
+    //       [hobby]
+    //     );
 
-        if(!hobbyDupeCheck.rows[0]) {
-          await db.query(
-            `INSERT INTO hobbies
-            (hobby)
-            VALUES ($1)`,
-            [hobby]
-          );
-        }
-        try {
-          const hobbyResult = await db.query(
-            `INSERT INTO users_hobbies
-            (user_id, hobby)
-            VALUES ($1, $2)
-                RETURNING hobby`,
-                [id, hobby]
-          );
-          userHobbies.push(hobbyResult.rows[0].hobby);
-        } catch (err) {
-          userHobbies.push(hobby);
-        }
-      }
-    } else {
-      await db.query(
-        `DELETE FROM users_hobbies
-          WHERE user_id = $1
-          RETURNING user_id`,
-        [id]
-      );
-    }
+    //     if(!hobbyDupeCheck.rows[0]) {
+    //       await db.query(
+    //         `INSERT INTO hobbies
+    //         (hobby)
+    //         VALUES ($1)`,
+    //         [hobby]
+    //       );
+    //     }
+    //     try {
+    //       const hobbyResult = await db.query(
+    //         `INSERT INTO users_hobbies
+    //         (user_id, hobby)
+    //         VALUES ($1, $2)
+    //             RETURNING hobby`,
+    //             [id, hobby]
+    //       );
+    //       userHobbies.push(hobbyResult.rows[0].hobby);
+    //     } catch (err) {
+    //       userHobbies.push(hobby);
+    //     }
+    //   }
+    // } else {
+    //   await db.query(
+    //     `DELETE FROM users_hobbies
+    //       WHERE user_id = $1
+    //       RETURNING user_id`,
+    //     [id]
+    //   );
+    // }
 
-    if(interests.length > 0) {
-      for(const interest of interests) {
-        const interestDupeCheck = await db.query(
-          `SELECT interest
-              FROM interests
-              WHERE interest = $1`,
-          [interest]
-        );
+    // if(interests.length > 0) {
+    //   for(const interest of interests) {
+    //     const interestDupeCheck = await db.query(
+    //       `SELECT interest
+    //           FROM interests
+    //           WHERE interest = $1`,
+    //       [interest]
+    //     );
 
-        if(!interestDupeCheck.rows[0]) {
-          await db.query(
-            `INSERT INTO interests
-            (interest)
-            VALUES ($1)`,
-            [interest]
-          );
-        }
+    //     if(!interestDupeCheck.rows[0]) {
+    //       await db.query(
+    //         `INSERT INTO interests
+    //         (interest)
+    //         VALUES ($1)`,
+    //         [interest]
+    //       );
+    //     }
 
-        try {
-          const interestResult = await db.query(
-            `INSERT INTO users_interests
-             (user_id, interest)
-             VALUES ($1, $2)
-             RETURNING interest`,
-             [id, interest]
-          );
-          userInterests.push(interestResult.rows[0].interest);
-        } catch (err) {
-          userInterests.push(interest);
-        }
-      }
-    } else {
-      await db.query(
-        `DELETE FROM users_interests
-          WHERE user_id = $1
-          RETURNING user_id`,
-        [id]
-      );
-    }
+    //     try {
+    //       const interestResult = await db.query(
+    //         `INSERT INTO users_interests
+    //          (user_id, interest)
+    //          VALUES ($1, $2)
+    //          RETURNING interest`,
+    //          [id, interest]
+    //       );
+    //       userInterests.push(interestResult.rows[0].interest);
+    //     } catch (err) {
+    //       userInterests.push(interest);
+    //     }
+    //   }
+    // } else {
+    //   await db.query(
+    //     `DELETE FROM users_interests
+    //       WHERE user_id = $1
+    //       RETURNING user_id`,
+    //     [id]
+    //   );
+    // }
 
-    user["hobbies"] = userHobbies;
-    user["interests"] = userInterests;
+    // user["hobbies"] = userHobbies;
+    // user["interests"] = userInterests;
 
     delete user.password;
     return user;

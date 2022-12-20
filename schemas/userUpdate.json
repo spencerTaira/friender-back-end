@@ -13,12 +13,6 @@
       "minLength": 1,
       "maxLength": 30
     },
-    "hobbies": {
-      "type": "array"
-    },
-    "interests": {
-      "type": "array"
-    },
     "zip": {
       "type": "string",
       "minLength": 5,
@@ -29,8 +23,6 @@
   "required": [
     "firstName",
     "lastName",
-    "hobbies",
-    "interests",
     "zip"
   ]
 }
