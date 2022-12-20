@@ -28,12 +28,6 @@
       "type": "string",
       "minLength": 5,
       "maxLength": 10
-    },
-    "hobbies": {
-      "type": "array"
-    },
-    "interests": {
-      "type": "array"
     }
   },
   "additionalProperties": false,
@@ -42,8 +36,6 @@
     "password",
     "firstName",
     "lastName",
-    "zip",
-    "hobbies",
-    "interests"
+    "zip"
   ]
 }

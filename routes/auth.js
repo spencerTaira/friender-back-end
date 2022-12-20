@@ -39,7 +39,7 @@ router.post("/token", async function (req, res, next) {
 
 /** POST /auth/register:   { user } => { token }
  *
- * user must include { email, password, firstName, lastName, zip, hobbies, interests }
+ * user must include { email, password, firstName, lastName, zip }
  *
  * Returns JWT token which can be used to authenticate further requests.
  *
