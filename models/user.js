@@ -24,7 +24,8 @@ class User {
   static async authenticate(email, password) {
     // try to find the user first
     const result = await db.query(
-      `SELECT email,
+      `SELECT     id,
+                  email,
                   password_hash AS "passwordHash",
                   first_name AS "firstName",
                   last_name AS "lastName",
