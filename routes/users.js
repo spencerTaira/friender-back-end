@@ -180,6 +180,17 @@ router.post(
   }
 )
 
+router.put(
+  "/:id/hobbies",
+  async function (req, res, next) {
+    try {
+      const hobbies = await User.updateHobbies(Number(req.params.id), req.body);
+      return res.json({ hobbies });
+    } catch (err) {
+      return next(err);
+    }
+  }
+)
 // router.post(
 //   "/images",
 //   // ensureCorrectUserOrAdmin,

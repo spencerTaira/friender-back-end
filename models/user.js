@@ -430,14 +430,26 @@ class User {
           );
         }
 
-        const hobbyResult = await db.query(
-          `INSERT INTO users_hobbies
-           (user_id, hobby)
-           VALUES ($1, $2)
-           RETURNING hobby`,
-           [id, hobby]
+        const userHobbyDupeCheck = await db.query(
+          `SELECT
+              hobby
+            FROM users_hobbies
+            WHERE user_id = $1 AND hobby = $2`,
+          [id, hobby]
         );
-        userHobbies.push(hobbyResult.rows[0].hobby);
+
+        if (!userHobbyDupeCheck.rows[0]) {
+          const hobbyResult = await db.query(
+            `INSERT INTO users_hobbies
+             (user_id, hobby)
+             VALUES ($1, $2)
+             RETURNING hobby`,
+             [id, hobby]
+          );
+          userHobbies.push(hobbyResult.rows[0].hobby);
+        } else {
+          userHobbies.push(hobby);
+        }
       }
     }
 
