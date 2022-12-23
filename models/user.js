@@ -451,6 +451,24 @@ class User {
           userHobbies.push(hobby);
         }
       }
+
+      const updatedHobbies = await db.query(
+        `SELECT hobby
+            FROM users_hobbies
+            WHERE user_id = $1`,
+        [id]
+      );
+
+      const oldHobbies = updatedHobbies.rows.filter(hobby => !userHobbies.includes(hobby.hobby));
+      console.log("OLD HOBBIES ARE HERE", oldHobbies);
+      for(const hobby of oldHobbies) {
+        await db.query(
+          `DELETE
+              FROM users_hobbies
+              WHERE user_id = $1 AND hobby = $2`,
+          [id, hobby.hobby]
+        );
+      }
     }
 
     return userHobbies;
