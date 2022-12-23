@@ -191,6 +191,19 @@ router.put(
     }
   }
 )
+
+router.put(
+  "/:id/interests",
+  async function (req, res, next) {
+    try {
+      const interests = await User.updateInterests(Number(req.params.id), req.body);
+      return res.json({ interests });
+    } catch (err) {
+      return next(err);
+    }
+  }
+)
+
 // router.post(
 //   "/images",
 //   // ensureCorrectUserOrAdmin,

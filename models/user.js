@@ -451,24 +451,26 @@ class User {
           userHobbies.push(hobby);
         }
       }
+    }
 
-      const updatedHobbies = await db.query(
-        `SELECT hobby
+    const updatedHobbies = await db.query(
+      `SELECT hobby
+          FROM users_hobbies
+          WHERE user_id = $1`,
+      [id]
+    );
+
+    const oldHobbies = updatedHobbies.rows.filter(hobby => !userHobbies.includes(hobby.hobby));
+
+    console.log("OLD HOBBIES ARE HERE", oldHobbies);
+
+    for(const hobby of oldHobbies) {
+      await db.query(
+        `DELETE
             FROM users_hobbies
-            WHERE user_id = $1`,
-        [id]
+            WHERE user_id = $1 AND hobby = $2`,
+        [id, hobby.hobby]
       );
-
-      const oldHobbies = updatedHobbies.rows.filter(hobby => !userHobbies.includes(hobby.hobby));
-      console.log("OLD HOBBIES ARE HERE", oldHobbies);
-      for(const hobby of oldHobbies) {
-        await db.query(
-          `DELETE
-              FROM users_hobbies
-              WHERE user_id = $1 AND hobby = $2`,
-          [id, hobby.hobby]
-        );
-      }
     }
 
     return userHobbies;
@@ -495,15 +497,47 @@ class User {
           );
         }
 
-        const interestResult = await db.query(
-          `INSERT INTO users_interests
-           (user_id, interest)
-           VALUES ($1, $2)
-           RETURNING interest`,
-           [id, interest]
+        const userInterestDupeCheck = await db.query(
+          `SELECT
+              interest
+            FROM users_interests
+            WHERE user_id = $1 AND interest = $2`,
+          [id, interest]
         );
-        userInterests.push(interestResult.rows[0].interest);
+
+        if (!userInterestDupeCheck.rows[0]) {
+          const interestResult = await db.query(
+            `INSERT INTO users_interests
+             (user_id, interest)
+             VALUES ($1, $2)
+             RETURNING interest`,
+             [id, interest]
+          );
+          userInterests.push(interestResult.rows[0].interest);
+        } else {
+          userInterests.push(interest);
+        }
       }
+    }
+
+    const updatedInterests = await db.query(
+      `SELECT interest
+          FROM users_interests
+          WHERE user_id = $1`,
+      [id]
+    );
+
+    const oldInterests = updatedInterests.rows.filter(interest => !userInterests.includes(interest.interest));
+
+    console.log("OLD INTERESTS ARE HERE", oldInterests);
+
+    for(const interest of oldInterests) {
+      await db.query(
+        `DELETE
+            FROM users_interests
+            WHERE user_id = $1 AND interest = $2`,
+        [id, interest.interest]
+      );
     }
 
     return userInterests;
